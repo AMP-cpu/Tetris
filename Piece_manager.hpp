@@ -8,6 +8,8 @@ public:
     Piece_manager();
     ~Piece_manager();
     void Change_current();
+    void Move_piece(int x, int y);
+    void Rotate_piece(int dir);
 
 };
 
@@ -21,9 +23,19 @@ Piece_manager::~Piece_manager()
 {
 }
 
-void Piece_manager::Change_current()
+void Controleur::Change_current()
 {
-    current = next;
+    pi = next;
     delete next;
     Piece *next = new Piece;
+}
+
+void Controleur::Move_piece(int x, int y)
+{
+    piece.uptadePos(x, y);
+}
+
+void Controleur::Rotate_piece(int dir)
+{
+    piece.rotate(dir);
 }
