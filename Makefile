@@ -1,26 +1,30 @@
-CXX = g++
-SRC_DIR = src
-HEADER_DIR = headers
-BUILD_DIR = build
-TARGET = main
+# Compiler
+CC := g++
+# Flags
+CFLAGS := -Wall -Wextra -std=c++11
+SFMLFLAGS := -lsfml-graphics -lsfml-window -lsfml-system
+# Directories
+SRCDIR := src
+INCDIR := headers
+BUILDDIR := build
+TARGET := executable
 
-SRCS := $(wildcard $(SRC_DIR)/*.cpp)
-OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRCS))
+# Files to compile
+CPPFILES := $(wildcard $(SRCDIR)/*.cpp)
+HPPFILES := $(wildcard $(INCDIR)/*.hpp)
+OBJECTS := $(CPPFILES:$(SRCDIR)/%.cpp=$(BUILDDIR)/%.o)
 
-CXXFLAGS = -Wall -Wextra -std=c++11 -I$(HEADER_DIR)
+# Make all
+all: $(TARGET)
 
-all: $(BUILD_DIR) $(TARGET)
+# Target
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) $^ -o $@ $(SFMLFLAGS)
 
-$(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+# Compile .cpp files
+$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(HPPFILES)
+	$(CC) $(CFLAGS) -I$(INCDIR) -c $< -o $@
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
-
+# Clean
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET)
-
-.PHONY: all clean
+	rm -f $(BUILDDIR)/*.o $(TARGET)
