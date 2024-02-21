@@ -27,6 +27,9 @@ int main() {
 
     bool landed = true; // Flag to indicate if the current piece has landed
 
+    std::vector<int> completed_lines;
+    bool completed;
+
     std::vector<Block> pieceBlocks;
     Piece piece(pieceBlocks);
 
@@ -35,11 +38,26 @@ int main() {
         // Process events
         sf::Event event;
         if (landed) {
+            completed_lines.clear();
             for (const auto& block : piece.getBlocks()) {
                 int row = block.getPosition().y / cellSize;
                 int col = block.getPosition().x / cellSize;
                 grid.set(row, col, 2); // Set the corresponding grid cell to 1 to indicate the block is occupied
                 grid.setColor(row, col, block.getColor());
+                completed = true;
+                for (const auto& i : grid.get_line(row)) {
+                    if(i == 0) {
+                        completed = false;
+                        break;
+                    }
+                }
+                if (completed) {
+                    completed_lines.insert(completed_lines.end()+1, row);
+                }
+            }
+
+            for(int i : completed_lines) {
+                
             }
 
             std::random_device rd;

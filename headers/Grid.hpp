@@ -22,6 +22,10 @@ public:
         return data.at(row).at(col).data;
     }
 
+    std::vector get_line(size_t row) {
+        return data.at(row);
+    }
+
     // Get the color of an element at a specific position
     sf::Color getColor(size_t row, size_t col) const {
         return data.at(row).at(col).color;
