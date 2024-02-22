@@ -18,14 +18,14 @@ int main() {
     }
 
     // Create the SFML window
-    sf::RenderWindow window(sf::VideoMode((cols + 2) * cellSize, (rows + 1) * cellSize), "SFML Grid");
+    sf::RenderWindow window(sf::VideoMode((cols + 2) * cellSize + (cols+ 2 ) * cellSize, (rows + 2) * cellSize), "SFML Grid");
     window.setVerticalSyncEnabled(true); // Enable VSync
 
     // Create User
     User user;
 
     // Create a grid object
-    Grid<int> grid(rows + 1, cols + 2, 0);
+    Grid<int> grid(rows + 2, cols + 2, 0);
 
     bool landed = true; // Flag to indicate if the current piece has landed
     bool firstPiece = true;
@@ -107,7 +107,7 @@ int main() {
         window.clear();
 
         // Draw the grid
-        grid.draw(window, font, cellSize);
+        grid.draw(window, font);
 
         // Draw the piece
         piece.draw(window);

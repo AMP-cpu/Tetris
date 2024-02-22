@@ -26,7 +26,7 @@ public:
     Grid(size_t rows, size_t cols, const T& defaultValue = T()) : data(rows, std::vector<GridElement>(cols, {defaultValue, sf::Color::White})) {}
 
     //Draw
-    void draw(sf::RenderWindow& window, const sf::Font& font, int cellSize) {
+    void draw(sf::RenderWindow& window, const sf::Font& font) {
         for (size_t row = 0; row < data.size(); ++row) {
             for (size_t col = 0; col < data[row].size(); ++col) {
                 // Draw cell background
@@ -34,7 +34,7 @@ public:
                 cellShape.setPosition(col * cellSize, row * cellSize);
                 cellShape.setFillColor(data[row][col].color);
                 
-                if(row==rows || col==0 || col==cols+1) {
+                if(row==rows+1 || col==0 || col==cols+1 || row==0) {
                     set(row,col,2);
                     setColor(row,col,sf::Color::Black);
                 }

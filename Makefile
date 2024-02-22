@@ -5,7 +5,7 @@ SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 SRCDIR = src
 HDRDIR = headers
 BUILDDIR = build
-TARGET = your_program_name
+TARGET = tetris
 
 SRCS = $(wildcard $(SRCDIR)/*.cpp)
 OBJS = $(patsubst $(SRCDIR)/%.cpp,$(BUILDDIR)/%.o,$(SRCS))
