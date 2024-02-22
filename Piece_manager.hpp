@@ -1,4 +1,5 @@
 #include Piece
+#include <random>
 class Piece_manager
 {
 private:
@@ -8,8 +9,6 @@ public:
     Piece_manager();
     ~Piece_manager();
     void Change_current();
-    void Move_piece(int x, int y);
-    void Rotate_piece(int dir);
 
 };
 
@@ -23,19 +22,16 @@ Piece_manager::~Piece_manager()
 {
 }
 
-void Controleur::Change_current()
+void Piece_manager::Change_current()
 {
-    pi = next;
+    delete current;
+    current = next;
     delete next;
-    Piece *next = new Piece;
-}
 
-void Controleur::Move_piece(int x, int y)
-{
-    piece.uptadePos(x, y);
-}
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(1, 7); // Distribution for 7 Tetris pieces
+    int pieceNumber = dis(gen);
 
-void Controleur::Rotate_piece(int dir)
-{
-    piece.rotate(dir);
+    Piece *next = new Piece(pieceNumber);
 }
