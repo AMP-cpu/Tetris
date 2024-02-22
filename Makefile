@@ -1,26 +1,23 @@
-CXX = g++
-SRC_DIR = src
-HEADER_DIR = headers
-BUILD_DIR = build
-TARGET = main
+CC = g++
+CFLAGS = -Wall -Wextra -std=c++11
+SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
-SRCS := $(wildcard $(SRC_DIR)/*.cpp)
-OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRCS))
+SRCDIR = src
+HDRDIR = headers
+BUILDDIR = build
+TARGET = your_program_name
 
-CXXFLAGS = -Wall -Wextra -std=c++11 -I$(HEADER_DIR)
+SRCS = $(wildcard $(SRCDIR)/*.cpp)
+OBJS = $(patsubst $(SRCDIR)/%.cpp,$(BUILDDIR)/%.o,$(SRCS))
+DEPS = $(wildcard $(HDRDIR)/*.hpp)
 
-all: $(BUILD_DIR) $(TARGET)
+all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ $(SFML_LIBS)
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(DEPS)
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET)
-
-.PHONY: all clean
+	rm -f $(BUILDDIR)/*.o $(TARGET)
