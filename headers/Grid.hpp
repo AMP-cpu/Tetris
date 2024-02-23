@@ -47,7 +47,7 @@ public:
                 // cellText.setCharacterSize(cellSize / 2.5); // Size of the text, adjusted to fit the cell
                 // cellText.setFillColor(sf::Color::Black); // Text color
 
-                // // Convert the data to string for displaying
+                // Convert the data to string for displaying
                 std::string cellValue = std::to_string(data[row][col].data);
 
                 // cellText.setString(cellValue);

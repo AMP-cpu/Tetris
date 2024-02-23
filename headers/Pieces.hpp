@@ -230,51 +230,88 @@ public:
         // Create a vector to hold blocks for the chosen piece
         std::vector<Block> pieceBlocks;
 
+        // Define a vector of possible colors
+        std::vector<sf::Color> colors = {
+            sf::Color::Cyan,
+            sf::Color::Blue,
+            sf::Color(255, 165, 0), // Orange
+            sf::Color::Yellow,
+            sf::Color::Green,
+            sf::Color(128, 0, 128), // Purple
+            sf::Color::Red
+        };
+
+        // Randomly select a color for each block within the piece
+        std::uniform_int_distribution<> colorDis(0, colors.size() - 1);
+
         // Add blocks to the piece based on the chosen piece number
         switch (pieceNumber) {
-                case 1: // Straight piece (I)
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize), sf::Color::Cyan);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), sf::Color::Cyan);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize), sf::Color::Cyan);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 6, cellSize), sf::Color::Cyan);
-                    break;
-                case 2: // L piece
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize), sf::Color::Blue);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize * 2), sf::Color::Blue);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), sf::Color::Blue);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize * 2), sf::Color::Blue);
-                    break;
-                case 3: // J piece
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize), sf::Color(255, 165, 0));
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize * 2), sf::Color(255, 165, 0));
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), sf::Color(255, 165, 0));
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize * 2), sf::Color(255, 165, 0));
-                    break;
-                case 4: // Square piece (O)
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), sf::Color::Yellow);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize), sf::Color::Yellow);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), sf::Color::Yellow);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize * 2), sf::Color::Yellow);
-                    break;
-                case 5: // S piece
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), sf::Color::Green);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize), sf::Color::Green);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize * 2), sf::Color::Green);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), sf::Color::Green);
-                    break;
-                case 6: // T piece
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), sf::Color(128, 0, 128));
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize * 2), sf::Color(128, 0, 128));
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), sf::Color(128, 0, 128));
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize * 2), sf::Color(128, 0, 128));
-                    break;
-                case 7: // Z piece
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize), sf::Color::Red);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), sf::Color::Red);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), sf::Color::Red);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize * 2), sf::Color::Red);
-                    break;
+            case 1: // Straight piece (I)
+                {
+                    sf::Color color = colors[colorDis(gen)];
+                    for (int i = 0; i < 4; ++i) { 
+                        pieceBlocks.emplace_back(sf::Vector2f(cellSize * (i + 3), cellSize), color);
+                    }
+                    
+                }  
+                break; 
+            case 2: // L piece
+                {
+                    sf::Color color = colors[colorDis(gen)];
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize), color);
+                    for (int i = 0; i < 3; ++i) {
+                        pieceBlocks.emplace_back(sf::Vector2f(cellSize * (i + 3), cellSize * 2), color);
+                    }
+                }
+                break;
+            case 3: // J piece
+                {
+                    sf::Color color = colors[colorDis(gen)];
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize), color);
+                    for (int i = 0; i < 3; ++i) {
+                        // sf::Color color = colors[colorDis(gen)];
+                        pieceBlocks.emplace_back(sf::Vector2f(cellSize * (i + 3), cellSize * 2), color);
+                    }
+                }
+                break;
+            case 4: // Square piece (O)
+                {
+                    sf::Color color = colors[colorDis(gen)];
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), color);
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize), color);
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), color);
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize * 2), color);
+                }
+                break;
+            case 5: // S piece
+                {
+                    sf::Color color = colors[colorDis(gen)];
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), color);
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize), color);
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize * 2), color);
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), color);
+                }
+                break;
+            case 6: // T piece
+                {
+                    sf::Color color = colors[colorDis(gen)];
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), color);
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize * 2), color);
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), color);
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize * 2), color);
+                }
+                break;
+            case 7: // Z piece
+                {
+                    sf::Color color = colors[colorDis(gen)];
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize), color);
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), color);
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), color);
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize * 2), color);
+                }
+                break;
         }
+
 
         return Piece(pieceBlocks);
     }

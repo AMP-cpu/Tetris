@@ -37,10 +37,7 @@ int main() {
     std::vector<Block> pieceBlocks;
     Piece<Block> piece(pieceBlocks);
 
-    // Set initial fall interval and velocity
     int fallInterval = 500; // in milliseconds
-    unsigned int minInterval = 100; // in milliseconds
-    int accelerationFactor = 10; // Adjust as needed
 
     // Initialize timing variables
     auto lastTime = std::chrono::steady_clock::now();
@@ -53,6 +50,8 @@ int main() {
         sf::Event event;
         if (landed || firstPiece) {
             if(!firstPiece) {
+                if(piece.getHighestVerticalPosition()==1)
+                    break;
                 int numberOfLignes = 0;
                 for(int i = piece.getHighestVerticalPosition(); i<=piece.getLowestVerticalPosition(); i++) {
                     if(grid.isLineComplete(i)) {
@@ -61,7 +60,7 @@ int main() {
                     }    
                 }
                 user.increasePoints(numberOfLignes);
-                std::cout<<"Pontos: "<<user.getScore()<<std::endl;
+                user.increaseLevel();
             }
             // Create a new piece with the chosen blocks
             Piece<Block> pieceT = Piece<Block>::generateRandomPiece();
