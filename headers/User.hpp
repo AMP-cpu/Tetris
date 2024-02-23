@@ -4,19 +4,19 @@
 class User
 {
 private:
-    unsigned int pontuation;
+    unsigned int score;
     unsigned int level;
 public:
-    User() : pontuation(0), level(1) {}
+    User() : score(0), level(1) {}
 
-    unsigned int getPontuation() {
-        return pontuation;
+    unsigned int getScore() {
+        return score;
     }
     unsigned int getLevel() {
         return level;
     }
     void increasePoints(unsigned int numberOfLines) {
-        pontuation+=numberOfLines*numberOfLines*level*100;
+        score+=numberOfLines*numberOfLines*level*100;
     }
     void increaseLevel() {
         level++;

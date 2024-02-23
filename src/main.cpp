@@ -4,6 +4,7 @@
 #include "../headers/Blocs.hpp"
 #include "../headers/Pieces.hpp"
 #include "../headers/User.hpp"
+#include "../headers/Score.hpp"
 #include <random> // for std::random_device, std::mt19937, std::uniform_int_distribution
 #include <chrono> // for timing
 #include <algorithm>
@@ -26,6 +27,9 @@ int main() {
 
     // Create a grid object
     Grid<int> grid(rows + 2, cols + 2, 0);
+
+    // Create Pontuation object
+    Score score;
 
     bool landed = true; // Flag to indicate if the current piece has landed
     bool firstPiece = true;
@@ -57,7 +61,7 @@ int main() {
                     }    
                 }
                 user.increasePoints(numberOfLignes);
-                std::cout<<"Pontos: "<<user.getPontuation()<<std::endl;
+                std::cout<<"Pontos: "<<user.getScore()<<std::endl;
             }
             // Create a new piece with the chosen blocks
             Piece<Block> pieceT = Piece<Block>::generateRandomPiece();
@@ -108,6 +112,9 @@ int main() {
 
         // Draw the grid
         grid.draw(window, font);
+
+        // Draw the pontuation
+        score.draw(window,font,user.getScore(), user.getLevel());
 
         // Draw the piece
         piece.draw(window);

@@ -35,28 +35,28 @@ public:
                 cellShape.setFillColor(data[row][col].color);
                 
                 if(row==rows+1 || col==0 || col==cols+1 || row==0) {
-                    set(row,col,2);
+                    set(row,col,1);
                     setColor(row,col,sf::Color::Black);
                 }
 
                 window.draw(cellShape);
                 
-                // Draw cell value
-                sf::Text cellText;
-                cellText.setFont(font);
-                cellText.setCharacterSize(cellSize / 2.5); // Size of the text, adjusted to fit the cell
-                cellText.setFillColor(sf::Color::Black); // Text color
+                // // Draw cell value
+                // sf::Text cellText;
+                // cellText.setFont(font);
+                // cellText.setCharacterSize(cellSize / 2.5); // Size of the text, adjusted to fit the cell
+                // cellText.setFillColor(sf::Color::Black); // Text color
 
-                // Convert the data to string for displaying
+                // // Convert the data to string for displaying
                 std::string cellValue = std::to_string(data[row][col].data);
 
-                cellText.setString(cellValue);
+                // cellText.setString(cellValue);
 
-                // Calculate text position to center it in the cell
-                sf::FloatRect textRect = cellText.getLocalBounds();
-                cellText.setOrigin(textRect.left + textRect.width/2.0f, textRect.top + textRect.height/2.0f);
-                cellText.setPosition(sf::Vector2f(col * cellSize + cellSize / 2.0f, row * cellSize + cellSize / 2.0f));
-                window.draw(cellText);
+                // // Calculate text position to center it in the cell
+                // sf::FloatRect textRect = cellText.getLocalBounds();
+                // cellText.setOrigin(textRect.left + textRect.width/2.0f, textRect.top + textRect.height/2.0f);
+                // cellText.setPosition(sf::Vector2f(col * cellSize + cellSize / 2.0f, row * cellSize + cellSize / 2.0f));
+                // window.draw(cellText);
             }
         }
     };
@@ -73,7 +73,7 @@ public:
 
     void eraseAndMoveLinesDown(size_t row) {
         // Start from the row to be erased and move upwards
-        for (size_t i = row; i > 0; --i) {
+        for (size_t i = row; i > 1; --i) {
             // Copy the values and colors from the line above
             data[i] = data[i - 1];
         }
