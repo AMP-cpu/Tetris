@@ -5,6 +5,7 @@
 #include "../headers/Pieces.hpp"
 #include "../headers/User.hpp"
 #include "../headers/Score.hpp"
+#include "../headers/Piece_manager.hpp"
 #include <random> // for std::random_device, std::mt19937, std::uniform_int_distribution
 #include <chrono> // for timing
 #include <algorithm>
@@ -35,7 +36,7 @@ int main() {
     bool firstPiece = true;
 
     std::vector<Block> pieceBlocks;
-    Piece<Block> piece(pieceBlocks);
+    Piece piece(pieceBlocks);
 
     int fallInterval = 500; // in milliseconds
 
@@ -63,7 +64,7 @@ int main() {
                 user.increaseLevel();
             }
             // Create a new piece with the chosen blocks
-            Piece<Block> pieceT = Piece<Block>::generateRandomPiece();
+            Piece pieceT = Piece_manager::Change_current();
             piece = pieceT.clone();
             piece.draw(window);
             landed = false; // Reset the landed flag
