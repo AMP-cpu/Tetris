@@ -4,13 +4,14 @@
 #include <vector>
 #include <random>
 
-template<typename T>
+
 class Piece {
-private:
+protected:
     std::vector<Block> blocks;
 
 public:
     Piece(const std::vector<Block>& blocks) : blocks(blocks) {}
+    Piece() {}
 
     ~Piece() {}
 
@@ -260,7 +261,107 @@ public:
         return lowestVerticalPosition.y/40;
     }
 
-    static Piece generateRandomPiece() {
+    static Piece generateRandomPiece();
+};
+
+class IPiece : public Piece {
+    public:
+
+    IPiece(sf::Color color) {
+        // Create a vector to hold blocks for the chosen piece
+        for (int i = 0; i < 4; ++i) { 
+           blocks.emplace_back(sf::Vector2f(cellSize * (i + 3), cellSize), color);
+        }
+    }
+};
+
+class LPiece : public Piece {
+    public:
+
+    LPiece(sf::Color color) {
+        // Create a vector to hold blocks for the chosen piece
+        blocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize), color);
+        for (int i = 0; i < 3; ++i) {
+            blocks.emplace_back(sf::Vector2f(cellSize * (i + 3), cellSize * 2), color);
+        }
+    }
+
+
+};
+
+class JPiece : public Piece {
+    public:
+
+    JPiece(sf::Color color) {
+        // Create a vector to hold blocks for the chosen piece
+        blocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize), color);
+        for (int i = 0; i < 3; ++i) {
+            // sf::Color color = colors[colorDis(gen)];
+            blocks.emplace_back(sf::Vector2f(cellSize * (i + 3), cellSize * 2), color);
+        }
+    }
+
+
+};
+
+class SquarePiece : public Piece {
+    public:
+
+    SquarePiece(sf::Color color) {
+        // Create a vector to hold blocks for the chosen piece
+        blocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), color);
+        blocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize), color);
+        blocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), color);
+        blocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize * 2), color);
+    }
+
+
+};
+
+class SPiece : public Piece {
+    public:
+
+    SPiece(sf::Color color) {
+        // Create a vector to hold blocks for the chosen piece
+        blocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), color);
+        blocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize), color);
+        blocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize * 2), color);
+        blocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), color);
+    }
+
+
+};
+
+
+class TPiece : public Piece {
+    public:
+
+    TPiece(sf::Color color) {
+        // Create a vector to hold blocks for the chosen piece
+        blocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), color);
+        blocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize * 2), color);
+        blocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), color);
+        blocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize * 2), color);
+    }
+
+
+};
+
+class ZPiece : public Piece {
+    public:
+
+    ZPiece(sf::Color color) {
+        // Create a vector to hold blocks for the chosen piece
+        blocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize), color);
+        blocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), color);
+        blocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), color);
+        blocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize * 2), color);
+    }
+
+
+};
+
+Piece Piece::generateRandomPiece() {
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> dis(1, 7); // Distribution for 7 Tetris pieces
@@ -268,6 +369,8 @@ public:
 
         // Create a vector to hold blocks for the chosen piece
         std::vector<Block> pieceBlocks;
+
+        Piece pieceT;
 
         // Define a vector of possible colors
         std::vector<sf::Color> colors = {
@@ -282,77 +385,54 @@ public:
 
         // Randomly select a color for each block within the piece
         std::uniform_int_distribution<> colorDis(0, colors.size() - 1);
+        sf::Color color = colors[colorDis(gen)];
 
-        // Add blocks to the piece based on the chosen piece number
-        switch (pieceNumber) {
+        switch (pieceNumber)
+        {
+
             case 1: // Straight piece (I)
                 {
-                    sf::Color color = colors[colorDis(gen)];
-                    for (int i = 0; i < 4; ++i) { 
-                        pieceBlocks.emplace_back(sf::Vector2f(cellSize * (i + 3), cellSize), color);
-                    }
-                    
+                    pieceT = IPiece(color);  
                 }  
                 break; 
             case 2: // L piece
                 {
-                    sf::Color color = colors[colorDis(gen)];
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize), color);
-                    for (int i = 0; i < 3; ++i) {
-                        pieceBlocks.emplace_back(sf::Vector2f(cellSize * (i + 3), cellSize * 2), color);
-                    }
+                    pieceT = LPiece(color);  
+
                 }
                 break;
             case 3: // J piece
                 {
-                    sf::Color color = colors[colorDis(gen)];
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize), color);
-                    for (int i = 0; i < 3; ++i) {
-                        // sf::Color color = colors[colorDis(gen)];
-                        pieceBlocks.emplace_back(sf::Vector2f(cellSize * (i + 3), cellSize * 2), color);
-                    }
+                    pieceT = JPiece(color);  
+
                 }
                 break;
             case 4: // Square piece (O)
                 {
-                    sf::Color color = colors[colorDis(gen)];
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), color);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize), color);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), color);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize * 2), color);
+                    pieceT = SquarePiece(color);  
+
                 }
                 break;
             case 5: // S piece
                 {
-                    sf::Color color = colors[colorDis(gen)];
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), color);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize), color);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), color);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize * 2), color);      
+                    pieceT = SPiece(color);  
+
                 }
                 break;
             case 6: // T piece
                 {
-                    sf::Color color = colors[colorDis(gen)];
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), color);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize * 2), color);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), color);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize * 2), color);
+                    pieceT = TPiece(color);  
+
                 }
                 break;
             case 7: // Z piece
                 {
-                    sf::Color color = colors[colorDis(gen)];
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize), color);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), color);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), color);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize * 2), color);
+                    pieceT = ZPiece(color);  
+
                 }
                 break;
         }
 
-
-        return Piece(pieceBlocks);
-    }
+        return pieceT;
+    };
     
-};

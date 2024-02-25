@@ -13,9 +13,6 @@
 void tetris(sf::RenderWindow& window, sf::Font font) {
     // Load font for displaying cell values
 
-
-    
-
     // Create User
     User user;
 
@@ -29,8 +26,8 @@ void tetris(sf::RenderWindow& window, sf::Font font) {
     bool firstPiece = true;
 
     std::vector<Block> pieceBlocks;
-    Piece<Block> piece(pieceBlocks);
-    Piece<Block> nextPiece(pieceBlocks);
+    Piece piece(pieceBlocks);
+    Piece nextPiece(pieceBlocks);
 
     int fallInterval = 500; // in milliseconds
 
@@ -59,11 +56,11 @@ void tetris(sf::RenderWindow& window, sf::Font font) {
                 piece = nextPiece.clone();
             }
             else {
-                Piece<Block> pieceT = Piece<Block>::generateRandomPiece();
+                Piece pieceT = Piece::generateRandomPiece();
                 piece = pieceT.clone();         
             }
             // Create a new piece with the chosen blocks
-            Piece<Block> nextPieceT = Piece<Block>::generateRandomPiece();
+            Piece nextPieceT = Piece::generateRandomPiece();
             nextPiece = nextPieceT.clone();
             
             landed = false; // Reset the landed flag   
