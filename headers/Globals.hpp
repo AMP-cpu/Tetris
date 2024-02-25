@@ -6,7 +6,7 @@ constexpr int cellSize = 40;
 
 
 // Set initial fall interval and velocity
-constexpr unsigned int minInterval = 100; // in milliseconds
+constexpr int minInterval = 100; // in milliseconds
 constexpr int accelerationFactor = 100; // Adjust as needed
 
 

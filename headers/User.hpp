@@ -4,22 +4,27 @@
 class User
 {
 private:
-    unsigned int score;
-    unsigned int level;
-    unsigned int scoreTemp;
+    int score;
+    int level;
+    int scoreTemp;
 public:
     User() : score(0), level(1), scoreTemp(0) {}
 
-    unsigned int getScore() {
+    int getScore() {
         return score;
     }
-    unsigned int getScoreTemp() {
+    void reset() {
+        score=0;
+        level=1;
+        scoreTemp=0;
+    }
+    int getScoreTemp() {
         return scoreTemp;
     }
-    unsigned int getLevel() {
+    int getLevel() {
         return level;
     }
-    void increasePoints(unsigned int numberOfLines) {
+    void increasePoints(int numberOfLines) {
         score+=numberOfLines*level*numberOfLines*100;
         scoreTemp+=numberOfLines*level*numberOfLines*100;
     }

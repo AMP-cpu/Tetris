@@ -3,24 +3,16 @@
 #include "../headers/Grid.hpp"
 #include "../headers/Blocs.hpp"
 #include "../headers/Pieces.hpp"
-#include "../headers/User.hpp"
-#include "../headers/Score.hpp"
 #include "../headers/Tetris.hpp"
 #include <random> // for std::random_device, std::mt19937, std::uniform_int_distribution
 #include <chrono> // for timing
 #include <algorithm>
 
-void tetris(sf::RenderWindow& window, sf::Font font) {
+void tetris(sf::RenderWindow& window, sf::Font font, User& user, Score& score, bool& gameOver) {
     // Load font for displaying cell values
-
-    // Create User
-    User user;
 
     // Create a grid object
     Grid<int> grid(rows + 2, cols + 2, 0);
-
-    // Create Pontuation object
-    Score score;
 
     bool landed = true; // Flag to indicate if the current piece has landed
     bool firstPiece = true;
@@ -42,8 +34,10 @@ void tetris(sf::RenderWindow& window, sf::Font font) {
         sf::Event event;
         if (landed || firstPiece) {
             if(!firstPiece) {
-                if(piece.getHighestVerticalPosition()==1)
+                if(piece.getHighestVerticalPosition()==1) {
+                    gameOver=true;
                     break;
+                }      
                 int numberOfLignes = 0;
                 for(int i = piece.getHighestVerticalPosition(); i<=piece.getLowestVerticalPosition(); i++) {
                     if(grid.isLineComplete(i)) {
@@ -79,7 +73,6 @@ void tetris(sf::RenderWindow& window, sf::Font font) {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
-
             // Handle keyboard input
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Escape) {

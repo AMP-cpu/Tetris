@@ -18,6 +18,11 @@ public:
         return score;
     }
 
+    // Getter for player score
+    void reset() {
+        score=0;
+    }
+
     // Method to update player's score
     void updateScore(int newScore) {
         score = newScore;
