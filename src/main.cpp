@@ -1,129 +1,39 @@
+#include "../headers/Tetris.hpp"
+#include "../headers/Globals.hpp"
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "../headers/Grid.hpp"
-#include "../headers/Blocs.hpp"
-#include "../headers/Pieces.hpp"
-#include "../headers/User.hpp"
-#include "../headers/Score.hpp"
-#include <random> // for std::random_device, std::mt19937, std::uniform_int_distribution
-#include <chrono> // for timing
-#include <algorithm>
+#include <ostream>
 
 int main() {
-    // Load font for displaying cell values
+
     sf::Font font;
     if (!font.loadFromFile("font/Arial.ttf")) {
         // Failed to load font, handle the error
         std::cerr << "Failed to load font" << std::endl;
-        return 1;
     }
-
     // Create the SFML window
     sf::RenderWindow window(sf::VideoMode((cols + 2) * cellSize + (cols+ 2 ) * cellSize, (rows + 2) * cellSize), "SFML Grid");
     window.setVerticalSyncEnabled(true); // Enable VSync
 
-    // Create User
-    User user;
+    tetris(window, font);
+    
+    // Game over text rendering
+    sf::Text gameOverText;
+    gameOverText.setFont(font);
+    gameOverText.setCharacterSize(50);
+    gameOverText.setFillColor(sf::Color::Red);
+    gameOverText.setString("Game Over");
+    gameOverText.setPosition((window.getSize().x - gameOverText.getLocalBounds().width) / 2, (window.getSize().y - gameOverText.getLocalBounds().height) / 2);
 
-    // Create a grid object
-    Grid<int> grid(rows + 2, cols + 2, 0);
+    // Clear the window
+    window.clear();
 
-    // Create Pontuation object
-    Score score;
+    // Draw game over text
+    window.draw(gameOverText);
 
-    bool landed = true; // Flag to indicate if the current piece has landed
-    bool firstPiece = true;
+    // Display the window
+    window.display();
 
-    std::vector<Block> pieceBlocks;
-    Piece<Block> piece(pieceBlocks);
-
-    int fallInterval = 500; // in milliseconds
-
-    // Initialize timing variables
-    auto lastTime = std::chrono::steady_clock::now();
-    auto currentTime = lastTime;
-    auto timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
-
-    // Main loop
-    while (window.isOpen()) {
-        // Process events
-        sf::Event event;
-        if (landed || firstPiece) {
-            if(!firstPiece) {
-                if(piece.getHighestVerticalPosition()==1)
-                    break;
-                int numberOfLignes = 0;
-                for(int i = piece.getHighestVerticalPosition(); i<=piece.getLowestVerticalPosition(); i++) {
-                    if(grid.isLineComplete(i)) {
-                        grid.eraseAndMoveLinesDown(i);
-                        numberOfLignes++;
-                    }    
-                }
-                user.increasePoints(numberOfLignes);
-                user.increaseLevel();
-            }
-            // Create a new piece with the chosen blocks
-            Piece<Block> pieceT = Piece<Block>::generateRandomPiece();
-            piece = pieceT.clone();
-            piece.draw(window);
-            landed = false; // Reset the landed flag
-            
-            firstPiece = false;
-
-            // Reset timing variables
-            lastTime = std::chrono::steady_clock::now();
-        }
-
-        // Update timing
-        currentTime = std::chrono::steady_clock::now();
-        timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
-
-        // Add blocks to the piece based on the chosen piece number
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            }
-
-            // Handle keyboard input
-            if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::Escape) {
-                    window.close();
-                } else if (event.key.code == sf::Keyboard::Space) {
-                    piece.rotateClockwiseIfPossible(grid);
-                } else if (event.key.code == sf::Keyboard::Left) {
-                    piece.moveLeft(grid);
-                } else if (event.key.code == sf::Keyboard::Right) {
-                    piece.moveRight(grid);
-                } else if (event.key.code == sf::Keyboard::Down) {
-                    piece.moveDown(grid, &landed);
-                }
-            }
-        }
-
-        // Automatic downward movement
-        if (timeDiff >= fallInterval) {
-            piece.moveDown(grid, &landed);
-            lastTime = std::chrono::steady_clock::now();
-        }
-
-        // Clear the window
-        window.clear();
-
-        // Draw the grid
-        grid.draw(window, font);
-
-        // Draw the pontuation
-        score.draw(window,font,user.getScore(), user.getLevel());
-
-        // Draw the piece
-        piece.draw(window);
-
-        // Display the window
-        window.display();
-
-        // Increase fall velocity based on level
-        fallInterval = std::max(minInterval, 500 - user.getLevel() * accelerationFactor);
-    }
-
-    return 0;
+    // Wait for a short while before closing
+    sf::sleep(sf::seconds(4));
 }

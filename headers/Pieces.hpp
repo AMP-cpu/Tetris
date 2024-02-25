@@ -24,6 +24,19 @@ public:
         }
     }
 
+    void drawNext(sf::RenderWindow& window) const {
+        // Define the position to draw the next piece
+        sf::Vector2f offset(13.5*cellSize, 11*cellSize); // Adjust as needed
+
+        for (const auto& block : blocks) {
+            // Set the block's position relative to the starting position
+            sf::RectangleShape shape(sf::Vector2f(cellSize, cellSize)); // Adjust size as needed
+            shape.setPosition(block.getPosition() + offset);
+            shape.setFillColor(block.getColor());
+            window.draw(shape);
+        }
+    }
+
     Piece clone() const {
         // Create a new vector of blocks to hold the cloned blocks
         std::vector<Block> clonedBlocks;
@@ -40,6 +53,26 @@ public:
         // Create and return a new piece with the cloned blocks
         return Piece(clonedBlocks);
     }
+
+    Piece cloneInitial() const {
+        // Create a new vector of blocks to hold the cloned blocks
+        std::vector<Block> clonedBlocks;
+
+        // Iterate over the blocks of the current piece and clone each block
+        for (const auto& block : blocks) {
+            // Create a new block with the same initial position and color as the original block
+            sf::Vector2f initialPosition = block.getInitialPosition();
+            sf::Color color = block.getColor();
+            Block clonedBlock(initialPosition, color);
+
+            // Add the cloned block to the vector of cloned blocks
+            clonedBlocks.push_back(clonedBlock);
+        }
+
+        // Create and return a new piece with the cloned blocks
+        return Piece(clonedBlocks);
+    }
+
 
     void move(const sf::Vector2f& offset) {
         for (auto& block : blocks) {
@@ -66,8 +99,8 @@ public:
         for (const auto& block : getBlocks()) {
             int row = (block.getPosition().y + cellSize) / cellSize;
             int col = block.getPosition().x / cellSize;
-            if (row > 0 && row < rows + 1) {
-                if (grid.at(row, col) == 2 || getLowestVerticalPosition()==rows) {
+            if (row > 0 && row <= rows + 1) {
+                if (grid.at(row, col) == 2 || row == rows+1 || getLowestVerticalPosition() == 20) {
                     for (const auto& block : getBlocks()) {
                         int row = block.getPosition().y / cellSize;
                         int col = block.getPosition().x / cellSize;
@@ -109,6 +142,12 @@ public:
     }
 
     void rotateClockwiseIfPossible(Grid<int>& grid) {
+        // Check if the current piece is the O piece (piece number 4)
+        if (blocks[0].getPosition()+sf::Vector2f(cellSize, 0) == blocks[1].getPosition()  && blocks[2].getPosition()+sf::Vector2f(cellSize, 0) == blocks[3].getPosition() && blocks[0].getPosition()+sf::Vector2f(0, cellSize)==blocks[2].getPosition()) {
+            // If it's the O piece, return without rotating
+            return;
+        }
+
         // Clone the piece
         Piece pieceTemp(clone());
 
@@ -120,7 +159,7 @@ public:
             int row = block.getPosition().y / cellSize;
             int col = block.getPosition().x / cellSize;
             if (row >= 0 && row < rows+1 && col > 0 && col < cols+1) {
-                if (grid.at(row, col) == 2) {
+                if (grid.at(row, col) == 2 || grid.at(row, col)==1) {
                     // If any cell is occupied, return without rotating the original piece
                     return;
                 }
@@ -213,7 +252,7 @@ public:
         
         // Find the leftmost block
         for (const auto& block : blocks) {
-            if (block.getPosition().y > lowestVerticalPosition.y) {
+            if (block.getPosition().y >= lowestVerticalPosition.y) {
                 lowestVerticalPosition = block.getPosition();
             }
         }
@@ -288,8 +327,8 @@ public:
                     sf::Color color = colors[colorDis(gen)];
                     pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize), color);
                     pieceBlocks.emplace_back(sf::Vector2f(cellSize * 5, cellSize), color);
-                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize * 2), color);
                     pieceBlocks.emplace_back(sf::Vector2f(cellSize * 4, cellSize * 2), color);
+                    pieceBlocks.emplace_back(sf::Vector2f(cellSize * 3, cellSize * 2), color);      
                 }
                 break;
             case 6: // T piece

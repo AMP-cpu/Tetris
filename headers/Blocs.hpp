@@ -1,18 +1,18 @@
 #ifndef BLOCKS_HPP
 #define BLOCKS_HPP
 
-#include <vector>
 #include <SFML/Graphics.hpp>
 #include "Globals.hpp"
 
 class Block {
 private:
     sf::Vector2f position;
+    sf::Vector2f initialPosition; // Added member for initial position
     sf::Color color;
     int value;
 
 public:
-    Block(const sf::Vector2f& pos, const sf::Color& col, int val = 2) : position(pos), color(col), value(val) {}
+    Block(const sf::Vector2f& pos, const sf::Color& col, int val = 2) : position(pos), initialPosition(pos), color(col), value(val) {}
 
     void setPosition(const sf::Vector2f& pos) {
         position = pos;
@@ -28,6 +28,10 @@ public:
 
     const sf::Vector2f& getPosition() const {
         return position;
+    }
+
+    const sf::Vector2f& getInitialPosition() const { // Added method to return initial position
+        return initialPosition;
     }
 
     const sf::Color& getColor() const {
