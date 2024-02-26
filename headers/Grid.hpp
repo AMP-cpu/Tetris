@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <sstream>
 #pragma once
 
 
@@ -104,6 +105,31 @@ public:
     void set(size_t row, size_t col, const T& value) {
         data.at(row).at(col).data = value;
     }
+
+    std::string Serialize() const {
+        std::ostringstream oss;
+        for (const auto& row : data) {
+            for (const auto& element : row) {
+                oss << element.data << " " << element.color.toInteger() << " ";
+            }
+        }
+
+        return oss.str();
+    }
+
+    // Deserialization of the Grid object
+    void Deserialize(const std::string& serializedData) {
+        std::istringstream iss(serializedData);
+        for (auto& row : data) {
+            for (auto& element : row) {
+                iss >> element.data;
+                int colorInteger;
+                iss >> colorInteger;
+                element.color = sf::Color(colorInteger);
+            }
+        }
+    }
+
 
     // Destruct
     ~Grid() {}

@@ -51,19 +51,19 @@ auto Server::Poll()
                 case ENET_EVENT_TYPE_CONNECT:
                     printf("A new client connected from %x:%u.\n", event.peer->address.host, event.peer->address.port);
                     peer = event.peer;
-                    enet_uint8 *data = 0;
+                    const char *data = 0;
                     return std::make_tuple(1, data);
                 case ENET_EVENT_TYPE_RECEIVE:
                     printf("Received a packet from client %u: %s\n", event.peer->connectID, event.packet->data);
-                    enet_uint8 *data = event.packet->data;
+                    const char *data = reinterpret_cast<const char*>(event.packet->data);
                     enet_packet_destroy(event.packet);
                     return std::make_tuple(2, data);
                 case ENET_EVENT_TYPE_DISCONNECT:
                     printf("%x:%u disconnected.\n", event.peer->address.host, event.peer->address.port);
-                    enet_uint8 *data = 0;
+                    const char *data = 0;
                     return std::make_tuple(3, data);
                 default:
-                    enet_uint8 *data = 0;
+                    const char *data = 0;
                     return std::make_tuple(0, data);
             }
         }

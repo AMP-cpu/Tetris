@@ -16,6 +16,7 @@ void tetris(sf::RenderWindow& window, sf::Font font, User& user, Score& score, b
 
     // Create a grid object
     Grid<int> grid(rows + 2, cols + 2, 0);
+    Grid<int> extGrid(rows + 2, cols + 2, 0);
 
     bool landed = true; // Flag to indicate if the current piece has landed
     bool firstPiece = true;
@@ -31,108 +32,214 @@ void tetris(sf::RenderWindow& window, sf::Font font, User& user, Score& score, b
     auto currentTime = lastTime;
     auto timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
 
-    // Main loop
-    while (window.isOpen()) {
-        //Connection setup
-        if (network == 1) {
+    if (network == 1) {
             Server server = Server(1234, "localhost", 2);
             while (std::get<0>(server.Poll()) != 1)
             {
                 printf("Waiting player\n");
             }
-            
-        }
-        else if (network == 2){
-            Client client = Client();
-            if(client.Connect(1234,  "localhost") == 0) {
-                menu=true;
-                break;
-            }
-            client.Poll();
-        }
-        
-        // Process events
-        sf::Event event;
-        if (landed || firstPiece) {
-            if(!firstPiece) {
-                if(piece.getHighestVerticalPosition()==1) {
-                    gameOver=true;
-                    break;
-                }      
-                int numberOfLignes = 0;
-                for(int i = piece.getHighestVerticalPosition(); i<=piece.getLowestVerticalPosition(); i++) {
-                    if(grid.isLineComplete(i)) {
-                        grid.eraseAndMoveLinesDown(i);
-                        numberOfLignes++;
-                    }    
+
+                // Main loop
+        while (window.isOpen()) {
+
+            std::string serializedData = grid.Serialize();
+            const char *message = serializedData.c_str();
+            server.Send(message);
+            const char *data = std::get<1>(server.Poll());
+            extGrid.Deserialize(data);
+
+            // Process events
+            sf::Event event;
+            if (landed || firstPiece) {
+                if(!firstPiece) {
+                    if(piece.getHighestVerticalPosition()==1) {
+                        gameOver=true;
+                        break;
+                    }      
+                    int numberOfLignes = 0;
+                    for(int i = piece.getHighestVerticalPosition(); i<=piece.getLowestVerticalPosition(); i++) {
+                        if(grid.isLineComplete(i)) {
+                            grid.eraseAndMoveLinesDown(i);
+                            numberOfLignes++;
+                        }    
+                    }
+                    user.increasePoints(numberOfLignes);
+                    user.increaseLevel();
+                    piece = nextPiece.clone();
                 }
-                user.increasePoints(numberOfLignes);
-                user.increaseLevel();
-                piece = nextPiece.clone();
-            }
-            else {
-                Piece pieceT = Piece::generateRandomPiece();
-                piece = pieceT.clone();         
-            }
-            // Create a new piece with the chosen blocks
-            Piece nextPieceT = Piece::generateRandomPiece();
-            nextPiece = nextPieceT.clone();
-            
-            landed = false; // Reset the landed flag   
-            firstPiece = false;
+                else {
+                    Piece pieceT = Piece::generateRandomPiece();
+                    piece = pieceT.clone();         
+                }
+                // Create a new piece with the chosen blocks
+                Piece nextPieceT = Piece::generateRandomPiece();
+                nextPiece = nextPieceT.clone();
+                
+                landed = false; // Reset the landed flag   
+                firstPiece = false;
 
-            // Reset timing variables
-            lastTime = std::chrono::steady_clock::now();
-        }
-
-        // Update timing
-        currentTime = std::chrono::steady_clock::now();
-        timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
-
-        // Add blocks to the piece based on the chosen piece number
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
+                // Reset timing variables
+                lastTime = std::chrono::steady_clock::now();
             }
-            // Handle keyboard input
-            if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::Escape) {
+
+            // Update timing
+            currentTime = std::chrono::steady_clock::now();
+            timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
+
+            // Add blocks to the piece based on the chosen piece number
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed) {
                     window.close();
-                } else if (event.key.code == sf::Keyboard::Space) {
-                    piece.rotateClockwiseIfPossible(grid);
-                } else if (event.key.code == sf::Keyboard::Left) {
-                    piece.moveLeft(grid);
-                } else if (event.key.code == sf::Keyboard::Right) {
-                    piece.moveRight(grid);
-                } else if (event.key.code == sf::Keyboard::Down) {
-                    piece.moveDown(grid, &landed);
-                } 
+                }
+                // Handle keyboard input
+                if (event.type == sf::Event::KeyPressed) {
+                    if (event.key.code == sf::Keyboard::Escape) {
+                        window.close();
+                    } else if (event.key.code == sf::Keyboard::Space) {
+                        piece.rotateClockwiseIfPossible(grid);
+                    } else if (event.key.code == sf::Keyboard::Left) {
+                        piece.moveLeft(grid);
+                    } else if (event.key.code == sf::Keyboard::Right) {
+                        piece.moveRight(grid);
+                    } else if (event.key.code == sf::Keyboard::Down) {
+                        piece.moveDown(grid, &landed);
+                    } 
+                }
             }
+
+            // Automatic downward movement
+            if (timeDiff >= fallInterval) {
+                piece.moveDown(grid, &landed);
+                lastTime = std::chrono::steady_clock::now();
+            }
+
+            // Clear the window
+            window.clear();
+
+            // Draw the grid
+            grid.draw(window, font);
+
+            // Draw the pontuation
+            score.draw(window,font,user.getScore(), user.getLevel());
+
+            // Draw the piece
+            piece.draw(window);
+            nextPiece.drawNext(window);
+
+            // Display the window
+            window.display();
+
+            // Increase fall velocity based on level
+            fallInterval = std::max(minInterval, 500 - user.getLevel() * accelerationFactor);
         }
-
-        // Automatic downward movement
-        if (timeDiff >= fallInterval) {
-            piece.moveDown(grid, &landed);
-            lastTime = std::chrono::steady_clock::now();
-        }
-
-        // Clear the window
-        window.clear();
-
-        // Draw the grid
-        grid.draw(window, font);
-
-        // Draw the pontuation
-        score.draw(window,font,user.getScore(), user.getLevel());
-
-        // Draw the piece
-        piece.draw(window);
-        nextPiece.drawNext(window);
-
-        // Display the window
-        window.display();
-
-        // Increase fall velocity based on level
-        fallInterval = std::max(minInterval, 500 - user.getLevel() * accelerationFactor);
+            
     }
+    else if (network == 2){
+        Client client = Client();
+        if(client.Connect(1234,  "localhost") == 0) {
+            menu=true;
+            return;
+        }
+        client.Poll();
+
+        // Main loop
+        while (window.isOpen()) {
+
+            std::string serializedData = grid.Serialize();
+            const char *message = serializedData.c_str();
+            client.Send(message);
+            const char *data = std::get<1>(client.Poll());
+            extGrid.Deserialize(data);
+
+            
+            // Process events
+            sf::Event event;
+            if (landed || firstPiece) {
+                if(!firstPiece) {
+                    if(piece.getHighestVerticalPosition()==1) {
+                        gameOver=true;
+                        break;
+                    }      
+                    int numberOfLignes = 0;
+                    for(int i = piece.getHighestVerticalPosition(); i<=piece.getLowestVerticalPosition(); i++) {
+                        if(grid.isLineComplete(i)) {
+                            grid.eraseAndMoveLinesDown(i);
+                            numberOfLignes++;
+                        }    
+                    }
+                    user.increasePoints(numberOfLignes);
+                    user.increaseLevel();
+                    piece = nextPiece.clone();
+                }
+                else {
+                    Piece pieceT = Piece::generateRandomPiece();
+                    piece = pieceT.clone();         
+                }
+                // Create a new piece with the chosen blocks
+                Piece nextPieceT = Piece::generateRandomPiece();
+                nextPiece = nextPieceT.clone();
+                
+                landed = false; // Reset the landed flag   
+                firstPiece = false;
+
+                // Reset timing variables
+                lastTime = std::chrono::steady_clock::now();
+            }
+
+            // Update timing
+            currentTime = std::chrono::steady_clock::now();
+            timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
+
+            // Add blocks to the piece based on the chosen piece number
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed) {
+                    window.close();
+                }
+                // Handle keyboard input
+                if (event.type == sf::Event::KeyPressed) {
+                    if (event.key.code == sf::Keyboard::Escape) {
+                        window.close();
+                    } else if (event.key.code == sf::Keyboard::Space) {
+                        piece.rotateClockwiseIfPossible(grid);
+                    } else if (event.key.code == sf::Keyboard::Left) {
+                        piece.moveLeft(grid);
+                    } else if (event.key.code == sf::Keyboard::Right) {
+                        piece.moveRight(grid);
+                    } else if (event.key.code == sf::Keyboard::Down) {
+                        piece.moveDown(grid, &landed);
+                    } 
+                }
+            }
+
+            // Automatic downward movement
+            if (timeDiff >= fallInterval) {
+                piece.moveDown(grid, &landed);
+                lastTime = std::chrono::steady_clock::now();
+            }
+
+            // Clear the window
+            window.clear();
+
+            // Draw the grid
+            grid.draw(window, font);
+
+            //Draw the oponents grid
+            //extGrid.draw(window, font);
+
+            // Draw the pontuation
+            score.draw(window,font,user.getScore(), user.getLevel());
+
+            // Draw the piece
+            piece.draw(window);
+            nextPiece.drawNext(window);
+
+            // Display the window
+            window.display();
+
+            // Increase fall velocity based on level
+            fallInterval = std::max(minInterval, 500 - user.getLevel() * accelerationFactor);
+        }
+    }
+
+
 }
