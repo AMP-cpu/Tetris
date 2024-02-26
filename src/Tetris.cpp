@@ -4,11 +4,14 @@
 #include "../headers/Blocs.hpp"
 #include "../headers/Pieces.hpp"
 #include "../headers/Tetris.hpp"
+#include "../headers/Server.hpp"
+#include "../headers/Client.hpp"
 #include <random> // for std::random_device, std::mt19937, std::uniform_int_distribution
 #include <chrono> // for timing
 #include <algorithm>
+#include <tuple>
 
-void tetris(sf::RenderWindow& window, sf::Font font, User& user, Score& score, bool& gameOver) {
+void tetris(sf::RenderWindow& window, sf::Font font, User& user, Score& score, bool& gameOver, bool& menu, int& network) {
     // Load font for displaying cell values
 
     // Create a grid object
@@ -30,6 +33,24 @@ void tetris(sf::RenderWindow& window, sf::Font font, User& user, Score& score, b
 
     // Main loop
     while (window.isOpen()) {
+        //Connection setup
+        if (network == 1) {
+            Server server = Server(1234, "localhost", 2);
+            while (std::get<0>(server.Poll()) != 1)
+            {
+                printf("Waiting player\n");
+            }
+            
+        }
+        else if (network == 2){
+            Client client = Client();
+            if(client.Connect(1234,  "localhost") == 0) {
+                menu=true;
+                break;
+            }
+            client.Poll();
+        }
+        
         // Process events
         sf::Event event;
         if (landed || firstPiece) {

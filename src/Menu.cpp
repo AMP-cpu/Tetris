@@ -5,7 +5,7 @@
 #include <ostream>
 #include <sstream>
 
-void Menu(sf::RenderWindow& window, sf::Font font, User& user, Score& score, bool& gameOver, bool& menu) {
+void Menu(sf::RenderWindow& window, sf::Font font, User& user, Score& score, bool& gameOver, bool& menu, int& network) {
     // Create text objects for menu options
     sf::Text singlePlayerText;
     singlePlayerText.setFont(font);
@@ -14,19 +14,27 @@ void Menu(sf::RenderWindow& window, sf::Font font, User& user, Score& score, boo
     singlePlayerText.setString("1. Single Player");
     singlePlayerText.setPosition(100, 100);
 
-    sf::Text doublePlayerText;
-    doublePlayerText.setFont(font);
-    doublePlayerText.setCharacterSize(30);
-    doublePlayerText.setFillColor(sf::Color::White);
-    doublePlayerText.setString("2. Double Player");
-    doublePlayerText.setPosition(100, 150);
+    sf::Text hostDoublePlayerText;
+    hostDoublePlayerText.setFont(font);
+    hostDoublePlayerText.setCharacterSize(30);
+    hostDoublePlayerText.setFillColor(sf::Color::White);
+    hostDoublePlayerText.setString("2. Host Double Player");
+    hostDoublePlayerText.setPosition(100, 150);
+
+    sf::Text joinDoublePlayerText;
+    joinDoublePlayerText.setFont(font);
+    joinDoublePlayerText.setCharacterSize(30);
+    joinDoublePlayerText.setFillColor(sf::Color::White);
+    joinDoublePlayerText.setString("3. Join Double Player");
+    joinDoublePlayerText.setPosition(100, 200);
 
         // Clear the window
         window.clear();
 
         // Draw menu options
         window.draw(singlePlayerText);
-        window.draw(doublePlayerText);
+        window.draw(hostDoublePlayerText);
+        window.draw(joinDoublePlayerText);
 
         // Display the window
         window.display();
@@ -44,13 +52,23 @@ void Menu(sf::RenderWindow& window, sf::Font font, User& user, Score& score, boo
                     std::cout << "Starting Single Player Mode" << std::endl;
                     menu=false;
                     gameOver=false;
+                    network=0;
                 }
-                // Start double player mode if the user presses '2'
+                // Host double player mode if the user presses '2'
                 else if (event.key.code == sf::Keyboard::Num2) {
                     // Call function to start double player mode
                     // For now, let's just print a message
                     std::cout << "Starting Double Player Mode" << std::endl;
                     menu=false;
+                    network=1;
+                }
+                // Enter in another double player server if the user presses '3'
+                else if (event.key.code == sf::Keyboard::Num3) {
+                    // Call function to start double player mode
+                    // For now, let's just print a message
+                    std::cout << "Starting Double Player Mode" << std::endl;
+                    menu=false;
+                    network=2;
                 }
             }
             

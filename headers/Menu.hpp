@@ -6,6 +6,6 @@
 #include "../headers/Score.hpp"
 #include <SFML/Graphics.hpp>
 
-void Menu(sf::RenderWindow& window, sf::Font font, User& user, Score& score, bool& gameOver, bool& menu);
+void Menu(sf::RenderWindow& window, sf::Font font, User& user, Score& score, bool& gameOver, bool& menu, int& network);
 
 #endif

@@ -1,6 +1,8 @@
 #include <enet/enet.h>
 #include <cstdio>
 #include <iostream>
+#include <string.h>
+#include <tuple>
 
 class Server
 {
@@ -9,14 +11,14 @@ private:
     ENetPeer *peer;
     
 public:
-    Server(int port, char *addressIP,int nConnections);
+    Server(int port,const char *addressIP,int nConnections);
     ~Server();
-    void Poll();
-    void Send(std::string message);
+    auto Poll();
+    void Send(const char *message);
 
 };
 
-Server::Server(int port, char *addressIP,int nConnections)
+Server::Server(int port, const char *addressIP,int nConnections)
 {
     // Initialize ENet
     if (enet_initialize() != 0) {
@@ -41,7 +43,7 @@ Server::~Server()
     enet_deinitialize;
 }
 
-void Server::Poll()
+auto Server::Poll()
 {
     ENetEvent event;
     if (enet_host_service(server, &event, 0) > 0) {
@@ -49,25 +51,26 @@ void Server::Poll()
                 case ENET_EVENT_TYPE_CONNECT:
                     printf("A new client connected from %x:%u.\n", event.peer->address.host, event.peer->address.port);
                     peer = event.peer;
-                    break;
+                    enet_uint8 *data = 0;
+                    return std::make_tuple(1, data);
                 case ENET_EVENT_TYPE_RECEIVE:
                     printf("Received a packet from client %u: %s\n", event.peer->connectID, event.packet->data);
-
-                    
-
+                    enet_uint8 *data = event.packet->data;
                     enet_packet_destroy(event.packet);
-                    break;
+                    return std::make_tuple(2, data);
                 case ENET_EVENT_TYPE_DISCONNECT:
                     printf("%x:%u disconnected.\n", event.peer->address.host, event.peer->address.port);
-                    break;
+                    enet_uint8 *data = 0;
+                    return std::make_tuple(3, data);
                 default:
-                    break;
+                    enet_uint8 *data = 0;
+                    return std::make_tuple(0, data);
             }
         }
 }
 
-void Server::Send(std::string message)
+void Server::Send(const char *message)
 {
-    ENetPacket* packet = enet_packet_create(message.c_str(), message.length() + 1, ENET_PACKET_FLAG_RELIABLE);
+    ENetPacket* packet = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send(peer, 0, packet);
 }
