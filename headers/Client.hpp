@@ -1,6 +1,7 @@
 #include <enet/enet.h>
 #include <cstdio>
 #include <iostream>
+#include <string.h>
 
 class Client
 {
@@ -11,9 +12,9 @@ private:
 public:
     Client();
     ~Client();
-    void Connect(int port, char *addressIP);
+    void Connect(int port, const char *addressIP);
     void Poll();
-    void Send(std::string message);
+    void Send(const char *message);
 
 };
 
@@ -34,10 +35,10 @@ Client::Client()
 Client::~Client()
 {
     enet_host_destroy(client);
-    enet_deinitialize;
+    enet_deinitialize();
 }
 
-void Client::Connect(int port, char *addressIP)
+void Client::Connect(int port, const char *addressIP)
 {
     // Create an address structure for the server to listen on
     ENetAddress address;
@@ -68,7 +69,6 @@ void Client::Connect(int port, char *addressIP)
     } else {
         fprintf(stderr, "Connection to the server timed out.\n");
         enet_peer_reset(peer);
-        enet_host_destroy(client);
     }
 }
 
@@ -94,11 +94,13 @@ void Client::Poll()
                     break;
             }
         }
+    
 
 }
 
-void Client::Send(std::string message)
+void Client::Send(const char *message)
 {
-    ENetPacket* packet = enet_packet_create(message.c_str(), message.length() + 1, ENET_PACKET_FLAG_RELIABLE);
+    ENetPacket* packet = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send(peer, 0, packet);
+    printf("sent\n");
 }
