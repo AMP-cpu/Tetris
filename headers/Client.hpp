@@ -12,12 +12,15 @@ private:
     
 public:
     Client();
+    Client(int p);
     ~Client();
     int Connect(int port, const char *addressIP);
-    auto Poll();
+    std::tuple<int, const char*> Poll();
     void Send(const char *message);
 
 };
+
+Client::Client(int p){}
 
 Client::Client()
 {
@@ -75,30 +78,33 @@ int Client::Connect(int port,const char *addressIP)
     }
 }
 
-auto Client::Poll()
+std::tuple<int, const char*> Client::Poll()
 {
     ENetEvent event;
+    int eventType = 0;
+    const char *data = nullptr;
     if (enet_host_service(client, &event, 0) > 0) {
-            switch (event.type) {
-                case ENET_EVENT_TYPE_CONNECT:
-                    printf("A new client connected from %x:%u.\n", event.peer->address.host, event.peer->address.port);
-                    const char *data = 0;
-                    return std::make_tuple(1, data);
-                case ENET_EVENT_TYPE_RECEIVE:
-                    printf("Received a packet from server %u: %s\n", event.peer->connectID, event.packet->data);
-                    const char *data = reinterpret_cast<const char*>(event.packet->data);
-                    enet_packet_destroy(event.packet);
-                    return std::make_tuple(2, data);                    
-                case ENET_EVENT_TYPE_DISCONNECT:
-                    printf("%x:%u disconnected.\n", event.peer->address.host, event.peer->address.port);
-                    const char *data = 0;
-                    return std::make_tuple(3, data);                    
-                default:
-                    const char *data = 0;
-                    return std::make_tuple(0, data);                    
-            }
+        switch (event.type) {
+            case ENET_EVENT_TYPE_CONNECT:
+                printf("A new client connected from %x:%u.\n", event.peer->address.host, event.peer->address.port);
+                eventType = 1;
+                break;
+            case ENET_EVENT_TYPE_RECEIVE:
+                printf("Received a packet from server %u: %s\n", event.peer->connectID, event.packet->data);
+                data = reinterpret_cast<const char*>(event.packet->data);
+                enet_packet_destroy(event.packet);
+                eventType = 2;
+                break;
+            case ENET_EVENT_TYPE_DISCONNECT:
+                printf("%x:%u disconnected.\n", event.peer->address.host, event.peer->address.port);
+                eventType = 3;
+                break;
+            default:
+                break;
         }
+    }
 
+    return std::make_tuple(eventType, data);
 }
 
 void Client::Send(const char *message)
