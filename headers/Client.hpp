@@ -12,15 +12,12 @@ private:
     
 public:
     Client();
-    Client(int p);
     ~Client();
     int Connect(int port, const char *addressIP);
     std::tuple<int, const char*> Poll();
     void Send(const char *message);
 
 };
-
-Client::Client(int p){}
 
 Client::Client()
 {
@@ -39,7 +36,7 @@ Client::Client()
 Client::~Client()
 {
     enet_host_destroy(client);
-    enet_deinitialize;
+    enet_deinitialize();
 }
 
 int Client::Connect(int port,const char *addressIP)
@@ -75,6 +72,7 @@ int Client::Connect(int port,const char *addressIP)
         fprintf(stderr, "Connection to the server timed out.\n");
         enet_peer_reset(peer);
         enet_host_destroy(client);
+        return -1;
     }
 }
 

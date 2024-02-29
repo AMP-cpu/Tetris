@@ -12,14 +12,11 @@ private:
     
 public:
     Server(int port,const char *addressIP,int nConnections);
-    Server();
     ~Server();
     std::tuple<int, const char*> Poll();
     void Send(const char *message);
 
 };
-
-Server::Server(){}
 
 Server::Server(int port, const char *addressIP,int nConnections)
 {
@@ -43,7 +40,7 @@ Server::Server(int port, const char *addressIP,int nConnections)
 Server::~Server()
 {
     enet_host_destroy(server);
-    enet_deinitialize;
+    enet_deinitialize();
 }
 
 std::tuple<int, const char*> Server::Poll()
