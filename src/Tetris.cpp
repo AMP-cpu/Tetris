@@ -16,7 +16,7 @@ void Server_loop(sf::RenderWindow& window, sf::Font font, User& user, Score& sco
     
     // Create a grid object
     Grid<int> grid(rows + 2, cols + 2, 0);
-    Grid<int> extGrid(rows + 2, cols + 2, 0);
+    // Grid<int> extGrid(rows + 2, cols + 2, 0);
 
     bool landed = true; // Flag to indicate if the current piece has landed
     bool firstPiece = true;
@@ -33,8 +33,10 @@ void Server_loop(sf::RenderWindow& window, sf::Font font, User& user, Score& sco
     auto timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
     
     //Initializing network 
-    Server server = Server(1234, "localhost", 2);
-    while (std::get<0>(server.Poll()) != 1)
+    
+    Server server = Server(1234, "127.0.0.1", 2);
+
+    while (std::get<0>(server.Poll())!=1)
     {
         printf("Waiting player\n");
     }
@@ -42,11 +44,11 @@ void Server_loop(sf::RenderWindow& window, sf::Font font, User& user, Score& sco
 
     // Main loop
     while (window.isOpen()) {
-        std::string serializedData = grid.Serialize();
-        const char *message = serializedData.c_str();
-        server.Send(message);
-        const char *data = std::get<1>(server.Poll());
-        extGrid.Deserialize(data);
+        // std::string serializedData = grid.Serialize();
+        // const char *message = serializedData.c_str();
+        // server.Send(message);
+        // const char *data = std::get<1>(server.Poll());
+        // extGrid.Deserialize(data);
 
         
         // Process events
@@ -160,21 +162,26 @@ void Client_loop(sf::RenderWindow& window, sf::Font font, User& user, Score& sco
     
     //Initializing network 
     Client client = Client();
-    if(client.Connect(1234,  "localhost") == 0) {
+    if(client.Connect(1234,  "127.0.0.1") == 0) {
         menu=true;
         return;
     }
     client.Poll();
+
 
     
 
     // Main loop
     while (window.isOpen()) {
         std::string serializedData = grid.Serialize();
+            
         const char *message = serializedData.c_str();
         client.Send(message);
         const char *data = std::get<1>(client.Poll());
-        extGrid.Deserialize(data);
+        std::cout<<"Doidao"<<std::endl;
+        if (data != nullptr && *data != '\0') {
+            extGrid.Deserialize(data);
+        }
         
         // Process events
         sf::Event event;
@@ -276,7 +283,7 @@ void tetris(sf::RenderWindow& window, sf::Font font, User& user, Score& score, b
     {
         Client_loop(window, font, user, score, gameOver, menu);
     }
-    else{
+    else {
         menu = true;
     }
     

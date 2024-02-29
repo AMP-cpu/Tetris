@@ -15,23 +15,22 @@ public:
     ~Server();
     std::tuple<int, const char*> Poll();
     void Send(const char *message);
-
 };
 
-Server::Server(int port, const char *addressIP,int nConnections)
+Server::Server(int port, const char *addressIP, int nConnections)
 {
     // Initialize ENet
     if (enet_initialize() != 0) {
         fprintf(stderr, "Failed to initialize ENet.\n");
     }
-
+    
     // Create an address structure for the server to listen on
     ENetAddress address;
-     enet_address_set_host (& address, addressIP);
+    enet_address_set_host(&address, addressIP);
     address.port = port;
 
     // Create the server host
-    ENetHost* server = enet_host_create(&address, nConnections, 2, 0, 0);
+    server = enet_host_create(&address, nConnections, 2, 0, 0); // Assign to class member, not local variable
     if (server == nullptr) {
         fprintf(stderr, "Failed to create server host.\n");
     }
@@ -48,7 +47,9 @@ std::tuple<int, const char*> Server::Poll()
     ENetEvent event;
     int eventType = 0;
     const char *data = nullptr;
-    if (enet_host_service(server, &event, 0) > 0) {
+        
+    if (server && enet_host_service(server, &event, 1000) > 0) { // Check if server is valid
+        std::cout << "A new client connected from" << std::endl;
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 printf("A new client connected from %x:%u.\n", event.peer->address.host, event.peer->address.port);
@@ -56,7 +57,7 @@ std::tuple<int, const char*> Server::Poll()
                 eventType = 1;
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
-                printf("Received a packet from client %u: %s\n", event.peer->connectID, event.packet->data);
+                // printf("Received a packet from client %u: %s\n", event.peer->incomingPeerID, static_cast<const char*>(event.packet->data)); // Use incomingPeerID
                 data = reinterpret_cast<const char*>(event.packet->data);
                 enet_packet_destroy(event.packet);
                 eventType = 2;
@@ -66,6 +67,8 @@ std::tuple<int, const char*> Server::Poll()
                 eventType = 3;
                 break;
             default:
+                printf("teste");
+                data = "0";
                 break;
         }
     }
@@ -75,6 +78,8 @@ std::tuple<int, const char*> Server::Poll()
 
 void Server::Send(const char *message)
 {
-    ENetPacket* packet = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
-    enet_peer_send(peer, 0, packet);
+    if (peer) { // Ensure peer is valid
+        ENetPacket* packet = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(peer, 0, packet);
+    }
 }
