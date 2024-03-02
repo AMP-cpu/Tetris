@@ -60,6 +60,7 @@ void Menu(sf::RenderWindow& window, sf::Font font, User& user, Score& score, boo
                     // For now, let's just print a message
                     std::cout << "Starting Double Player Mode" << std::endl;
                     menu=false;
+                    gameOver=false;
                     network=1;
                 }
                 // Enter in another double player server if the user presses '3'
@@ -68,6 +69,7 @@ void Menu(sf::RenderWindow& window, sf::Font font, User& user, Score& score, boo
                     // For now, let's just print a message
                     std::cout << "Starting Double Player Mode" << std::endl;
                     menu=false;
+                    gameOver=false;
                     network=2;
                 }
             }
