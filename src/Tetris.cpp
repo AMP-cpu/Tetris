@@ -12,7 +12,7 @@
 #include <tuple>
 
 
-void Main_loop(sf::RenderWindow& window, sf::Font font, bool& landed, bool& firstPiece, Piece& piece, Piece& nextPiece, bool& gameOver, Grid<int>& grid, User& user, Score& score, std::chrono::_V2::steady_clock::time_point lastTime, int fallInterval){
+void Main_loop(sf::RenderWindow& window, sf::Font font, bool& landed, bool& firstPiece, Piece& piece, Piece& nextPiece, bool& gameOver, Grid<int>& grid, User& user, Score& score, std::chrono::_V2::steady_clock::time_point& lastTime, int& fallInterval){
     // Process events
         sf::Event event;
         if (landed || firstPiece) {
@@ -101,7 +101,7 @@ void Main_loop(sf::RenderWindow& window, sf::Font font, bool& landed, bool& firs
         fallInterval = std::max(minInterval, 500 - user.getLevel() * accelerationFactor);
 }
 
-void Server_loop(sf::RenderWindow& window, sf::Font font, User& user, Score& score, bool& gameOver, bool& landed, bool& firstPiece, Piece& piece, Piece& nextPiece, Grid<int>& grid, Grid<int>& extGrid, std::chrono::_V2::steady_clock::time_point lastTime, int fallInterval) {
+void Server_loop(sf::RenderWindow& window, sf::Font font, User& user, Score& score, bool& gameOver, bool& landed, bool& firstPiece, Piece& piece, Piece& nextPiece, Grid<int>& grid, Grid<int>& extGrid, std::chrono::_V2::steady_clock::time_point& lastTime, int& fallInterval) {
     //Initializing network 
     
     Server server = Server(1234, "127.0.0.1", 2);
@@ -129,7 +129,7 @@ void Server_loop(sf::RenderWindow& window, sf::Font font, User& user, Score& sco
     }
 }
 
-void Client_loop(sf::RenderWindow& window, sf::Font font, User& user, Score& score, bool& gameOver, bool& menu, bool& landed, bool& firstPiece, Piece& piece, Piece& nextPiece, Grid<int>& grid, Grid<int>& extGrid, std::chrono::_V2::steady_clock::time_point lastTime, int fallInterval) {
+void Client_loop(sf::RenderWindow& window, sf::Font font, User& user, Score& score, bool& gameOver, bool& menu, bool& landed, bool& firstPiece, Piece& piece, Piece& nextPiece, Grid<int>& grid, Grid<int>& extGrid, std::chrono::_V2::steady_clock::time_point& lastTime, int& fallInterval) {
     
     //Initializing network 
     Client client = Client();
