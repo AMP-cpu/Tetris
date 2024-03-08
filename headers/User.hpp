@@ -36,6 +36,21 @@ public:
         
     }
 
+    std::string Serialize() const {
+        std::ostringstream oss;
+        oss << score << " " << level << " " << scoreTemp << " ,";
+        return oss.str();
+    }
+
+    // Deserialization of the Grid object
+    void Deserialize(const std::string& serializedData) {
+        std::istringstream iss(serializedData);
+        iss >> score;
+        iss >> level;
+        iss >> scoreTemp;
+    }
+
+
     ~User() {}
 };
 

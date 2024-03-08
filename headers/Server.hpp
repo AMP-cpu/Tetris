@@ -13,7 +13,7 @@ private:
 public:
     Server(int port,const char *addressIP,int nConnections);
     ~Server();
-    std::tuple<int, const char*> Poll();
+    std::tuple<int,const char*> Poll();
     void Send(const char *message);
 };
 
@@ -46,7 +46,7 @@ std::tuple<int, const char*> Server::Poll()
 {
     ENetEvent event;
     int eventType = 0;
-    const char *data = nullptr;
+    char *data = nullptr;
         
     if (server && enet_host_service(server, &event, 1000) > 0) { // Check if server is valid
         std::cout << "A new client connected from" << std::endl;
@@ -58,7 +58,7 @@ std::tuple<int, const char*> Server::Poll()
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
                 // printf("Received a packet from client %u: %s\n", event.peer->incomingPeerID, static_cast<const char*>(event.packet->data)); // Use incomingPeerID
-                data = reinterpret_cast<const char*>(event.packet->data);
+                data = reinterpret_cast<char*>(event.packet->data);
                 enet_packet_destroy(event.packet);
                 eventType = 2;
                 break;

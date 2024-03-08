@@ -113,7 +113,7 @@ public:
                 oss << element.data << " " << element.color.toInteger() << " ";
             }
         }
-
+        oss << ",";
         return oss.str();
     }
 
