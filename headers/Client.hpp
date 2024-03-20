@@ -85,6 +85,7 @@ std::tuple<int, const char*> Client::Poll()
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 printf("A new client connected from %x:%u.\n", event.peer->address.host, event.peer->address.port);
+                data = "0";
                 eventType = 1;
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
@@ -98,6 +99,7 @@ std::tuple<int, const char*> Client::Poll()
                 eventType = 3;
                 break;
             default:
+                data = "0";
                 break;
         }
     }

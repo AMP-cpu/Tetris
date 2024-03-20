@@ -156,26 +156,25 @@ void Server_loop(sf::RenderWindow& window, sf::Font font, User& user, User& extU
         if(data == "GameOver") {
             extGameOver = true;
         }
-        if(!extGameOver){
-            std::istringstream iss(data);
-            std::vector<std::string> tokens;
-            std::string token;
-
-            while (std::getline(iss, token, ',')) {
-                tokens.push_back(token);
-            }
-            extGrid.Deserialize(tokens[0]);
-            extUser.Deserialize(tokens[1]);
-            extPiece.Deserialize(tokens[2]);
+        if(!extGameOver && data != nullptr){
+            char *temp = new char[strlen(data) + 1];
+            strcpy(temp, data); 
+            char *token = strtok(temp, ",");
+            extGrid.Deserialize(token);
+            token = strtok(temp, ",");
+            extUser.Deserialize(token);
+            token = strtok(temp, ",");
+            extPiece.Deserialize(token);
         }
+
         Main_loop(window, font, landed, firstPiece, piece, nextPiece, gameOver, grid, user, score, lastTime, fallInterval);
         if (gameOver){
             server.Send("GameOver");
         }
     }
-
-
 }
+
+
 
 void Client_loop(sf::RenderWindow& window, sf::Font font, User& user, User& extUser, Score& score, bool& gameOver, bool& extGameOver, bool& menu, bool& landed, bool& firstPiece, Piece& piece, Piece& nextPiece, Piece& extPiece, Grid<int>& grid, Grid<int>& extGrid, std::chrono::_V2::steady_clock::time_point& lastTime, int& fallInterval) {
     
@@ -196,26 +195,22 @@ void Client_loop(sf::RenderWindow& window, sf::Font font, User& user, User& extU
             std::stringstream serializedData;
             serializedData << serializedGrid << serializedUser << serializedPiece;
             const char *message = serializedData.str().c_str();
-            client.Send(message);
+            client.Send(serializedGrid.c_str());
         }
         const char *data = std::get<1>(client.Poll());
+
         if(data == "GameOver") {
             extGameOver = true;
         }
-        if(!extGameOver){
-            std::istringstream iss(data);
-            std::vector<std::string> tokens;
-            std::string token;
-
-            while (std::getline(iss, token, ',')) {
-                tokens.push_back(token);
-            }
-            extGrid.Deserialize(tokens[0]);
-            extUser.Deserialize(tokens[1]);
-            extPiece.Deserialize(tokens[2]);
-        }
-        if (data != nullptr && *data != '\0') {
-            extGrid.Deserialize(data);
+        if(!extGameOver && data != nullptr){
+            char *temp = new char[strlen(data) + 1];
+            strcpy(temp, data); 
+            char *token = strtok(temp, ",");
+            extGrid.Deserialize(token);
+            token = strtok(temp, ",");
+            extUser.Deserialize(token);
+            token = strtok(temp, ",");
+            extPiece.Deserialize(token);
         }
         Main_loop(window, font, landed, firstPiece, piece, nextPiece, gameOver, grid, user, score, lastTime, fallInterval);
         if (gameOver){
