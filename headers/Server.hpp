@@ -49,15 +49,15 @@ std::tuple<int, const char*> Server::Poll()
     char *data = nullptr;
         
     if (server && enet_host_service(server, &event, 1000) > 0) { // Check if server is valid
-        std::cout << "A new client connected from" << std::endl;
         switch (event.type) {
             case ENET_EVENT_TYPE_CONNECT:
                 printf("A new client connected from %x:%u.\n", event.peer->address.host, event.peer->address.port);
                 peer = event.peer;
                 eventType = 1;
+                data="0";
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
-                // printf("Received a packet from client %u: %s\n", event.peer->incomingPeerID, static_cast<const char*>(event.packet->data)); // Use incomingPeerID
+                printf("Received a packet from client %u: %s\n", event.peer->incomingPeerID, event.packet->data); // Use incomingPeerID
                 data = reinterpret_cast<char*>(event.packet->data);
                 enet_packet_destroy(event.packet);
                 eventType = 2;
@@ -65,6 +65,7 @@ std::tuple<int, const char*> Server::Poll()
             case ENET_EVENT_TYPE_DISCONNECT:
                 printf("%x:%u disconnected.\n", event.peer->address.host, event.peer->address.port);
                 eventType = 3;
+                data="0";
                 break;
             default:
                 printf("teste");

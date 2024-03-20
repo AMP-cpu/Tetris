@@ -7,7 +7,7 @@
 class Block {
 private:
     sf::Vector2f position;
-    sf::Vector2f initialPosition; // Added member for initial position
+    sf::Vector2f initialPosition; 
     sf::Color color;
     int value;
 
