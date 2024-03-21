@@ -25,10 +25,10 @@ void Main_loop(sf::RenderWindow& window, sf::Font font, bool& landed, bool& firs
         window.clear();
 
         // Draw the grid
-        grid.draw(window, font);
+        grid.draw(window);
 
         //Draw the oponents grid
-        //extGrid.draw(window, font);
+        //extGrid.draw(window);
 
         // Draw the pontuation
         score.draw(window,font,user.getScore(), user.getLevel());
@@ -112,10 +112,10 @@ void Main_loop(sf::RenderWindow& window, sf::Font font, bool& landed, bool& firs
 
     window.draw(backgroundSprite);
     // Draw the grid
-    grid.draw(window, font);
+    grid.draw(window);
 
     //Draw the oponents grid
-    //extGrid.draw(window, font);
+    //extGrid.draw(window);
 
     // Draw the pontuation
     score.draw(window,font,user.getScore(), user.getLevel());
@@ -188,6 +188,7 @@ void Server_loop(sf::RenderWindow& window, sf::Font font, User& user, User& extU
 
 
 
+
 void Client_loop(sf::RenderWindow& window, sf::Font font, User& user, User& extUser, Score& score, bool& gameOver, bool& extGameOver, bool& menu, bool& landed, bool& firstPiece, Piece& piece, Piece& nextPiece, Piece& extPiece, Grid<int>& grid, Grid<int>& extGrid, std::chrono::_V2::steady_clock::time_point& lastTime, int& fallInterval) {
     
     //Initializing network 
@@ -252,8 +253,6 @@ void tetris(sf::RenderWindow& window, sf::Font font, User& user, Score& score, b
 
     // Initialize timing variables
     auto lastTime = std::chrono::steady_clock::now();
-    auto currentTime = lastTime;
-    auto timeDiff = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastTime).count();
 
     bool extGameOver = false;
     User extUser;

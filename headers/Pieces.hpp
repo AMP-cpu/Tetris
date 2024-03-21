@@ -277,7 +277,7 @@ public:
         int nblocks;
         iss >> nblocks;
         blocks.clear();
-        for (nblocks;nblocks > 0; nblocks --) {
+        for (;nblocks > 0; nblocks --) {
             int x, y, ix, iy, color;
             iss >> x;
             iss >> y;

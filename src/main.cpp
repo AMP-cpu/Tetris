@@ -32,7 +32,7 @@ int main() {
 
     while (window.isOpen()) {
         if(menu) 
-            Menu(window, font, user, score, gameOver, menu, network);
+            Menu(window, font, gameOver, menu, network);
         if (!gameOver && !menu)
             tetris(window, font, user, score, gameOver, menu, network);
         else if(gameOver && !menu) {            

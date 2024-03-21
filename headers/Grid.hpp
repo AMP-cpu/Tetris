@@ -27,7 +27,7 @@ public:
     Grid(size_t rows, size_t cols, const T& defaultValue = T()) : data(rows, std::vector<GridElement>(cols, {defaultValue, sf::Color::Black})) {}
 
     //Draw
-    void draw(sf::RenderWindow& window, const sf::Font& font) {
+    void draw(sf::RenderWindow& window) {
         for (size_t row = 0; row < data.size(); ++row) {
             for (size_t col = 0; col < data[row].size(); ++col) {
                 // Draw cell background

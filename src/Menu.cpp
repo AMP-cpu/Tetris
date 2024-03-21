@@ -5,7 +5,7 @@
 #include <ostream>
 #include <sstream>
 
-void Menu(sf::RenderWindow& window, sf::Font font, User& user, Score& score, bool& gameOver, bool& menu, int& network) {
+void Menu(sf::RenderWindow& window, sf::Font font, bool& gameOver, bool& menu, int& network) {
     sf::Texture backgroundTexture;
     if (!backgroundTexture.loadFromFile("background/TetrisBackground.png")) {
         std::cerr << "Failed to load background image!" << std::endl;

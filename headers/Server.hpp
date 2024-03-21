@@ -46,7 +46,7 @@ std::tuple<int, const char*> Server::Poll()
 {
     ENetEvent event;
     int eventType = 0;
-    char *data = nullptr;
+    const char *data = nullptr;
         
     if (server && enet_host_service(server, &event, 1000) > 0) { // Check if server is valid
         switch (event.type) {
