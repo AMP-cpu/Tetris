@@ -1,5 +1,8 @@
 #ifndef USER_HPP
 #define USER_HPP
+#include <iostream>
+#include <sstream>
+#include <string>
 
 class User
 {
@@ -35,6 +38,21 @@ public:
         }
         
     }
+
+    std::string Serialize() const {
+        std::ostringstream oss;
+        oss << score << " " << level << " " << scoreTemp << " ,";
+        return oss.str();
+    }
+
+    // Deserialization of the Grid object
+    void Deserialize(const std::string& serializedData) {
+        std::istringstream iss(serializedData);
+        iss >> score;
+        iss >> level;
+        iss >> scoreTemp;
+    }
+
 
     ~User() {}
 };

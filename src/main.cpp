@@ -11,7 +11,7 @@
 
 int main() {
     sf::Font font;
-    if (!font.loadFromFile("font/Arial.ttf")) {
+    if (!font.loadFromFile("font/Start.ttf")) {
         // Failed to load font, handle the error
         std::cerr << "Failed to load font" << std::endl;
         return 1;
@@ -28,12 +28,13 @@ int main() {
 
     bool gameOver = false;
     bool menu = true;
+    int network = 0;
 
     while (window.isOpen()) {
         if(menu) 
-            Menu(window, font, user, score, gameOver, menu);
+            Menu(window, font, user, score, gameOver, menu, network);
         if (!gameOver && !menu)
-            tetris(window, font, user, score, gameOver);
+            tetris(window, font, user, score, gameOver, menu, network);
         else if(gameOver && !menu) {            
             GameOver(window, font, user, score, gameOver, menu);
         }

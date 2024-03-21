@@ -261,6 +261,36 @@ public:
         return lowestVerticalPosition.y/40;
     }
 
+    std::string Serialize() const {
+        std::ostringstream oss;
+        oss << blocks.size() << " ";
+        for (const auto& element : blocks) {
+             oss << element.getPosition().x << " " << element.getPosition().y << " " << element.getInitialPosition().x << " " << element.getInitialPosition().y << " " << element.getColor().toInteger() << " ";
+        }
+        oss << ",";
+        return oss.str();
+    }
+
+    // Deserialization of the Grid object
+    void Deserialize(const std::string& serializedData) {
+        std::istringstream iss(serializedData);
+        int nblocks;
+        iss >> nblocks;
+        blocks.clear();
+        for (nblocks;nblocks > 0; nblocks --) {
+            int x, y, ix, iy, color;
+            iss >> x;
+            iss >> y;
+            iss >> ix;
+            iss >> iy;
+            iss >> color;
+            Block clonedBlock(sf::Vector2f(ix, iy), sf::Color(color));
+            clonedBlock.setPosition(sf::Vector2f(x,y));
+            blocks.push_back(clonedBlock);
+        }
+    }
+
+
     static Piece generateRandomPiece();
 };
 
@@ -435,4 +465,6 @@ Piece Piece::generateRandomPiece() {
 
         return pieceT;
     };
+
+    
     

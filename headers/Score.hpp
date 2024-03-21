@@ -30,7 +30,7 @@ public:
 
     void draw(sf::RenderWindow& window, const sf::Font& font, int score, int level) {
         
-                sf::RectangleShape cellShape(sf::Vector2f(8*cellSize, 10*cellSize));
+                sf::RectangleShape cellShape(sf::Vector2f(8*cellSize, 16*cellSize));
                 cellShape.setPosition(14 * cellSize, 1 * cellSize);
                 cellShape.setFillColor(sf::Color::Black);
                 
@@ -43,7 +43,7 @@ public:
                 scoreText.setCharacterSize(cellSize); // Adjust size as needed
                 scoreText.setFillColor(sf::Color::White);
                 scoreText.setString("SCORE");
-                scoreText.setPosition(14 * cellSize + (8 * cellSize - scoreText.getLocalBounds().width) / 2, 2 * cellSize - scoreText.getLocalBounds().height);
+                scoreText.setPosition(14 * cellSize + (8 * cellSize - scoreText.getLocalBounds().width) / 2, 3 * cellSize - scoreText.getLocalBounds().height);
                 window.draw(scoreText);
                 
                 // Draw cell value
