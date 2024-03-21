@@ -13,6 +13,13 @@
 
 
 void Main_loop(sf::RenderWindow& window, sf::Font font, bool& landed, bool& firstPiece, Piece& piece, Piece& nextPiece, bool& gameOver, Grid<int>& grid, User& user, Score& score, std::chrono::_V2::steady_clock::time_point& lastTime, int& fallInterval){
+    sf::Texture backgroundTexture;
+    if (!backgroundTexture.loadFromFile("background/TetrisBackground.png")) {
+        std::cerr << "Failed to load background image!" << std::endl;
+        return;
+    }
+    sf::Sprite backgroundSprite(backgroundTexture);
+    
     if(gameOver){
         // Clear the window
         window.clear();
@@ -103,6 +110,7 @@ void Main_loop(sf::RenderWindow& window, sf::Font font, bool& landed, bool& firs
     // Clear the window
     window.clear();
 
+    window.draw(backgroundSprite);
     // Draw the grid
     grid.draw(window, font);
 

@@ -11,7 +11,7 @@
 
 int main() {
     sf::Font font;
-    if (!font.loadFromFile("font/Arial.ttf")) {
+    if (!font.loadFromFile("font/Start.ttf")) {
         // Failed to load font, handle the error
         std::cerr << "Failed to load font" << std::endl;
         return 1;

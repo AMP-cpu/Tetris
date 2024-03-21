@@ -6,6 +6,13 @@
 #include <sstream>
 
 void Menu(sf::RenderWindow& window, sf::Font font, User& user, Score& score, bool& gameOver, bool& menu, int& network) {
+    sf::Texture backgroundTexture;
+    if (!backgroundTexture.loadFromFile("background/TetrisBackground.png")) {
+        std::cerr << "Failed to load background image!" << std::endl;
+        return;
+    }
+    sf::Sprite backgroundSprite(backgroundTexture);
+    
     // Create text objects for menu options
     sf::Text singlePlayerText;
     singlePlayerText.setFont(font);
@@ -32,9 +39,11 @@ void Menu(sf::RenderWindow& window, sf::Font font, User& user, Score& score, boo
         window.clear();
 
         // Draw menu options
+        window.draw(backgroundSprite);
         window.draw(singlePlayerText);
         window.draw(hostDoublePlayerText);
         window.draw(joinDoublePlayerText);
+        
 
         // Display the window
         window.display();

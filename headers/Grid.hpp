@@ -24,20 +24,20 @@ private:
 
 public:
     // Create
-    Grid(size_t rows, size_t cols, const T& defaultValue = T()) : data(rows, std::vector<GridElement>(cols, {defaultValue, sf::Color::White})) {}
+    Grid(size_t rows, size_t cols, const T& defaultValue = T()) : data(rows, std::vector<GridElement>(cols, {defaultValue, sf::Color::Black})) {}
 
     //Draw
     void draw(sf::RenderWindow& window, const sf::Font& font) {
         for (size_t row = 0; row < data.size(); ++row) {
             for (size_t col = 0; col < data[row].size(); ++col) {
                 // Draw cell background
-                sf::RectangleShape cellShape(sf::Vector2f(cellSize - 1, cellSize - 1));
+                sf::RectangleShape cellShape(sf::Vector2f(cellSize , cellSize ));
                 cellShape.setPosition(col * cellSize, row * cellSize);
                 cellShape.setFillColor(data[row][col].color);
                 
                 if(row==rows+1 || col==0 || col==cols+1 || row==0) {
                     set(row,col,1);
-                    setColor(row,col,sf::Color::Black);
+                    setColor(row,col,sf::Color::Transparent);
                 }
 
                 window.draw(cellShape);
@@ -82,7 +82,7 @@ public:
         for (auto& element : data[0]) {
             // Set the data to some default value (e.g., 0) and color to white
             element.data = 0; // You may need to adjust this to match your default value for T
-            element.color = sf::Color::White;
+            element.color = sf::Color::Black;
         }
     }
 
