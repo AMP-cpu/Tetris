@@ -54,7 +54,7 @@ std::tuple<int, const char*> Server::Poll()
                 printf("A new client connected from %x:%u.\n", event.peer->address.host, event.peer->address.port);
                 peer = event.peer;
                 eventType = 1;
-                data="0";
+                data = "0";
                 break;
             case ENET_EVENT_TYPE_RECEIVE:
                 printf("Received a packet from client %u: %s\n", event.peer->incomingPeerID, event.packet->data); // Use incomingPeerID
@@ -65,7 +65,7 @@ std::tuple<int, const char*> Server::Poll()
             case ENET_EVENT_TYPE_DISCONNECT:
                 printf("%x:%u disconnected.\n", event.peer->address.host, event.peer->address.port);
                 eventType = 3;
-                data="0";
+                data = "0";
                 break;
             default:
                 printf("teste");

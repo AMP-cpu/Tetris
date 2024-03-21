@@ -149,37 +149,36 @@ void Server_loop(sf::RenderWindow& window, sf::Font font, User& user, User& extU
             std::stringstream serializedData;
             serializedData << serializedGrid << serializedUser << serializedPiece;
             const char *message = serializedData.str().c_str();
-            server.Send(serializedPiece.c_str());
+            server.Send(message);
         }
-        
         const char *data = std::get<1>(server.Poll());
 
-        if(data == "GameOver") {
+        if (data == nullptr) {
+            // std::cout<<"ERRORRR"<<std::endl;
+        } else if (strcmp(data, "GameOver") == 0) {
             extGameOver = true;
+        } else {
+            // Process the received data
+            char *temp = new char[strlen(data) + 1];
+            strcpy(temp, data); 
+            char *token = strtok(temp, ",");
+            extGrid.Deserialize(token);
+            token = strtok(temp, ",");
+            extUser.Deserialize(token);
+            token = strtok(temp, ",");
+            extPiece.Deserialize(token);
+            delete[] temp;
         }
-        if(!extGameOver && data!=nullptr){
-            std::istringstream iss(data);
-            std::vector<std::string> tokens;
-            std::string token;
 
-            while (std::getline(iss, token, ',')) {
-                tokens.push_back(token);
-            }
-            if(tokens.size()==3) {
-                extGrid.Deserialize(tokens[0]);
-                extUser.Deserialize(tokens[1]);
-                extPiece.Deserialize(tokens[2]);
-                std::cout<<"ENTROO S"<<std::endl;
-            }
-        }
+
         Main_loop(window, font, landed, firstPiece, piece, nextPiece, gameOver, grid, user, score, lastTime, fallInterval);
         if (gameOver){
             server.Send("GameOver");
         }
     }
-
-
 }
+
+
 
 void Client_loop(sf::RenderWindow& window, sf::Font font, User& user, User& extUser, Score& score, bool& gameOver, bool& extGameOver, bool& menu, bool& landed, bool& firstPiece, Piece& piece, Piece& nextPiece, Piece& extPiece, Grid<int>& grid, Grid<int>& extGrid, std::chrono::_V2::steady_clock::time_point& lastTime, int& fallInterval) {
     
@@ -189,9 +188,8 @@ void Client_loop(sf::RenderWindow& window, sf::Font font, User& user, User& extU
         menu=true;
         return;
     }
-
     client.Poll();
-    
+
     // Main loop
     while (window.isOpen() && !gameOver && !extGameOver) {
         if(!gameOver){
@@ -201,47 +199,28 @@ void Client_loop(sf::RenderWindow& window, sf::Font font, User& user, User& extU
             std::stringstream serializedData;
             serializedData << serializedGrid << serializedUser << serializedPiece;
             const char *message = serializedData.str().c_str();
-            client.Send(serializedGrid.c_str());
+            client.Send(message);
         }
-
         const char *data = std::get<1>(client.Poll());
 
-        if(data == "GameOver") {
+        if (data == nullptr) {
+            // std::cout<<"ERRORRR"<<std::endl;
+        } else if (strcmp(data, "GameOver") == 0) {
             extGameOver = true;
+        } else {
+            // Process the received data
+            char *temp = new char[strlen(data) + 1];
+            strcpy(temp, data); 
+            char *token = strtok(temp, ",");
+            extGrid.Deserialize(token);
+            token = strtok(temp, ",");
+            extUser.Deserialize(token);
+            token = strtok(temp, ",");
+            extPiece.Deserialize(token);
+            delete[] temp;
         }
-        
-        if(!extGameOver && data!=nullptr){
-            std::istringstream iss(data);
-            std::string token;
-            while (iss) {
-        
-                // Streaming until space is
-                // encountered
-                iss >> token;
-        
-                // If my_stream is not empty
-                if (iss) {
-                    std::cout << "That stream was successful: "
-                        << token << "\n";
-                }
-            }
-            // std::istringstream iss(data);
-            std::vector<std::string> tokens;
-            // std::string token;
-            
-            while (std::getline(iss, token, ',')) {
-                tokens.push_back(token);
-            }
-            std::cout<<tokens.size()<<std::endl;
-            if(tokens.size()==3) {
-                extGrid.Deserialize(tokens[0]);
-                extUser.Deserialize(tokens[1]);
-                extPiece.Deserialize(tokens[2]);
-                
-            }
 
 
-        }
         Main_loop(window, font, landed, firstPiece, piece, nextPiece, gameOver, grid, user, score, lastTime, fallInterval);
         if (gameOver){
             client.Send("GameOver");
